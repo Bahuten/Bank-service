@@ -1,0 +1,287 @@
+openapi: 3.0.3
+info:
+  title: Bank service API contract
+  description:
+    Bank service repo
+    - [Codebase from Git](https://github.worldpay.com/William-Cuthbert/bank-service)
+  version: 1.0.0
+tags:
+  - name: Account
+    description: Everything about bank accounts
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+  - name: Transaction
+    description: Everything about bank transactions
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+paths:
+  /api/v1/bank/Accounts:
+    post:
+      tags:
+        - Account
+      summary: Create new Account
+      description: Create new Account
+        - bank name
+        - first name
+        - surname
+      requestBody:
+        description: Create new Account
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createAccountRequest'
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/accountResponse'
+    get:
+      tags:
+        - Account
+      summary: Get all accounts
+      description: Get all accounts with no inputs required
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/accountRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/accountResponse'
+  /api/v1/bank/Accounts/AccountId:
+    get:
+      tags:
+        - Account
+      summary: Get account by sort code and account number
+      description: Get account by sort code and account number
+      requestBody:
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/accountRequest'
+         required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/accountResponse'
+  /api/v1/bank/transactions/transfer:
+    post:
+      tags:
+        - Transaction
+      summary: transfer
+      description: make a transfer to another account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/transactionRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/accountResponse'
+  /api/v1/bank/transactions/deposit:
+    post:
+      tags:
+        - Transaction
+      summary: deposit
+      description: make a deposit into current account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/depositRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/accountResponse'
+  /api/v1/bank/transactions/withdraw:
+    post:
+      tags:
+        - Transaction
+      summary: withdraw
+      description: make a withdrawal from current account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/withdrawRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/accountResponse'
+components:
+  schemas:
+    createAccountRequest:
+      type: object
+      required:
+        - bank name
+        - first name
+        - surname
+      properties:
+        bank name:
+          type: string
+          description: The name of the bank
+          example: Bank of England
+        first name:
+          type: string
+          description: Person's first name
+          example: John
+        surname:
+          type: string
+          description: Person's surname
+          example: Doe
+    accountResponse:
+      type: object
+      required:
+        - id
+        - bank name
+        - first name
+        - surname
+        - sort code
+        - account number
+        - balance
+      properties:
+        id:
+          type: integer
+          description: ID of the account
+          example: 859384242
+        bank name:
+          type: string
+          description: The name of the bank
+          example: Bank of England
+        first name:
+          type: string
+          description: Person's first name
+          example: John
+        surname:
+          type: string
+          description: Person's surname
+          example: Doe
+        sort code:
+          type: string
+          description: sort code to identify the bank used
+          example: 00-00-00
+        account number:
+          type: string
+          description: account number to identify the bank account number
+          example: 12345678
+        balance:
+          type: integer
+          description: amount of the money in the current account
+          example: 150.00
+    accountRequest:
+      type: object
+      required:
+        - sort code
+        - account number
+      properties:
+        sort code:
+          type: string
+          description: sort code to identify the bank used
+          example: 00-00-00
+        account number:
+          type: string
+          description: account number to identify the bank account number
+          example: 12345678
+    transactionRequest:
+      type: object
+      required:
+        - current account
+        - target account
+        - amount
+        - reference
+      properties:
+        current account:
+          type: object
+          required:
+            - sort code
+            - account number
+          properties:
+            sort code:
+              type: string
+              description: sort code to identify the bank used
+              example: 00-00-00
+            account number:
+              type: string
+              description: account number to identify the bank account number
+              example: 12345678
+        target account:
+          type: object
+          required:
+            - sort code
+            - account number
+          properties:
+            sort code:
+              type: string
+              description: sort code to identify the bank used
+              example: 00-00-00
+            account number:
+              type: string
+              description: account number to identify the bank account number
+              example: 12345678
+        amount:
+          type: integer
+          description: amount to pay
+          example: 10.99
+        reference:
+          type: string
+          description: describe the transaction
+          example: rent
+    depositRequest:
+      type: object
+      required:
+        - account number
+        - amount
+      properties:
+        account number:
+          type: string
+          description: account number to identify the bank account number
+          example: 12345678
+        amount:
+          type: integer
+          description: amount to pay
+          example: 10.99
+    withdrawRequest:
+      type: object
+      required:
+        - sort code
+        - account number
+        - amount
+      properties:
+        sort code:
+          type: string
+          description: sort code to identify the bank used
+          example: 00-00-00
+        account number:
+          type: string
+          description: account number to identify the bank account number
+          example: 12345678
+        amount:
+          type: integer
+          description: amount to pay
+          example: 10.99
