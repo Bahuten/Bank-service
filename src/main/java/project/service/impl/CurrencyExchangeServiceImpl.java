@@ -5,6 +5,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import project.service.interfaces.CurrencyExchangeService;
 
@@ -13,20 +16,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 
 import static project.utility.CommonUtils.*;
 
 @Slf4j
 @Service
 public class CurrencyExchangeServiceImpl implements CurrencyExchangeService {
-    private final DecimalFormat df;
+    private final DecimalFormat decimalFormat;
     private final String API_KEY;
     private final String API_URL;
     private HttpURLConnection httpConnection;
@@ -34,16 +34,14 @@ public class CurrencyExchangeServiceImpl implements CurrencyExchangeService {
     private String PAIR_API_ENDPOINT;
     private String LATEST_RATES_API_ENDPOINT;
 
-    public CurrencyExchangeServiceImpl() throws IOException {
-        String rootPath = "/Users/e5585680/Documents/Personal dev work/bank-api/src/main/resources";
-        String appConfigPath = rootPath + "/application.properties";
-        Properties prop = new Properties();
-        prop.load(Files.newInputStream(Paths.get(appConfigPath)));
-        this.API_KEY = prop.getProperty("exchange.rate.api.key");
-        this.API_URL = prop.getProperty("exchange.rate.api.url");
+    @Autowired
+    public CurrencyExchangeServiceImpl(@Value("${exchange.rate.api.key}") String apiKey, 
+        @Value("${exchange.rate.api.url}") String apiUrl) throws IOException {
+        this.API_KEY = apiKey;
+        this.API_URL = apiUrl;
         this.PAIR_API_ENDPOINT = API_URL + API_KEY + PAIR_ENDPOINT + "/%s" + "/%s" + "/%s";
         this.LATEST_RATES_API_ENDPOINT = API_URL + API_KEY + LATEST_ENDPOINT + "/%s";
-        this.df = new DecimalFormat("0.00");
+        this.decimalFormat = new DecimalFormat("0.00");
     }
 
     @Override
@@ -132,6 +130,6 @@ public class CurrencyExchangeServiceImpl implements CurrencyExchangeService {
     }
 
     private String valueFormat(double value) {
-        return df.format(value);
+        return decimalFormat.format(value);
     }
 }

@@ -3,9 +3,11 @@ package project.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+
 import project.service.impl.CurrencyExchangeServiceImpl;
 
 import java.io.IOException;
@@ -15,11 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
 public class CurrencyExchangeServiceImplTest {
-    private CurrencyExchangeServiceImpl currencyExchangeServiceImpl;
+    
+    @InjectMocks
+    private CurrencyExchangeServiceImpl currencyExchangeService;
 
     @BeforeEach
     public void setup() throws IOException {
-        currencyExchangeServiceImpl = new CurrencyExchangeServiceImpl();
+        currencyExchangeService = new CurrencyExchangeServiceImpl("a664ee8006b087abf8381e53", "https://v6.exchangerate-api.com/v6/");
     }
 
     @Test
@@ -28,7 +32,7 @@ public class CurrencyExchangeServiceImplTest {
         String targetCurrency = "GBP";
         double amount = 20.00;
 
-        boolean actualResult = currencyExchangeServiceImpl.getConvertedCurrencyAmount(baseCurrency, targetCurrency, amount) != 0;
+        boolean actualResult = currencyExchangeService.getConvertedCurrencyAmount(baseCurrency, targetCurrency, amount) != 0;
         assertTrue(actualResult);
     }
 
@@ -38,14 +42,14 @@ public class CurrencyExchangeServiceImplTest {
         String targetCurrency = "GBP";
         double amount = -20.00;
 
-        boolean actualResult = currencyExchangeServiceImpl.getConvertedCurrencyAmount(baseCurrency, targetCurrency, amount) != 0;
+        boolean actualResult = currencyExchangeService.getConvertedCurrencyAmount(baseCurrency, targetCurrency, amount) != 0;
         assertFalse(actualResult);
     }
 
     @Test
     public void getAllSupportedCurrencyCodes() {
         int size = 162;
-        int actualSupportedCodes = currencyExchangeServiceImpl.getCurrencyCodes().size();
+        int actualSupportedCodes = currencyExchangeService.getCurrencyCodes().size();
         assertEquals(size, actualSupportedCodes);
     }
 
@@ -54,7 +58,7 @@ public class CurrencyExchangeServiceImplTest {
         String baseCurrency = "USD";
         int expectedSize = 162;
 
-        int actualApiResponseSize = currencyExchangeServiceImpl.getLatestCurrencyRates(baseCurrency).size();
+        int actualApiResponseSize = currencyExchangeService.getLatestCurrencyRates(baseCurrency).size();
         assertEquals(expectedSize, actualApiResponseSize);
     }
 
@@ -63,7 +67,7 @@ public class CurrencyExchangeServiceImplTest {
         String baseCurrency = "AAA";
         int expectedSize = 0;
 
-        int actualApiResponseSize = currencyExchangeServiceImpl.getLatestCurrencyRates(baseCurrency).size();
+        int actualApiResponseSize = currencyExchangeService.getLatestCurrencyRates(baseCurrency).size();
         assertEquals(expectedSize, actualApiResponseSize);
     }
 }

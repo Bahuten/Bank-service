@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.project</groupId>
     <artifactId>bank-service</artifactId>
-    <version>0.0.0</version>
+    <version>0.0.5</version>
     <name>bank-api</name>
     <description>bank-service</description>
     <properties>
